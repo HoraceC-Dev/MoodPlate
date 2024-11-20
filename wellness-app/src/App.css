@@ -1,0 +1,126 @@
+/* Resetting default styles */
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  color: white;
+  padding-top: 5px;
+  font-size: 1.5em;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.logo img {
+  height: 70px; /* Adjust height as needed */
+  width: auto;
+}
+
+.header .menu-bar ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.header .menu-bar ul li {
+  cursor: pointer;
+  color: white;
+}
+
+/* Main Content Layout */
+.main-content {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left Sidebar */
+.left-sidebar {
+  width: 20%;
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.left-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.left-sidebar ul li {
+  padding: 8px 10px;
+  margin: 5px 0;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  text-align: center;
+}
+
+/* Workstation */
+.workstation {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: #fdfdfd;
+}
+
+.workstation textarea {
+  width: 100%;
+  height: 90%;
+  resize: none;
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-size: 1em;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Right Expandable Panel */
+.right-panel {
+  width: 0;
+  transition: width 0.3s ease;
+  background-color: #eee;
+  border-left: 1px solid #ddd;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.right-panel.open {
+  width: 40%;
+}
+
+.right-panel.closed {
+  width: 0;
+}
+
+.right-panel .toggle-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  margin: 10px 0;
+}
+
+.right-panel .info-content {
+  padding: 20px;
+  text-align: center;
+}

@@ -1,0 +1,5 @@
+pymongo
+fastapi
+python-dotenv
+langchain
+langchain_aws
