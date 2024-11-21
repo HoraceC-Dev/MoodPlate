@@ -1,0 +1,69 @@
+/* Font: Arial */
+.ql-font-arial {
+  font-family: Arial, sans-serif;
+}
+
+/* Font: Times New Roman */
+.ql-font-times-new-roman {
+  font-family: "Times New Roman", serif;
+}
+
+/* Font: Courier New */
+.ql-font-courier-new {
+  font-family: "Courier New", monospace;
+}
+
+/* Font: Georgia */
+.ql-font-georgia {
+  font-family: Georgia, serif;
+}
+
+/* Font: Comic Sans MS */
+.ql-font-comic-sans-ms {
+  font-family: "Comic Sans MS", cursive;
+}
+
+/* Font: Verdana */
+.ql-font-verdana {
+  font-family: Verdana, sans-serif;
+}
+
+/* Font: Tahoma */
+.ql-font-tahoma {
+  font-family: Tahoma, sans-serif;
+}
+
+/* Font: Impact */
+.ql-font-impact {
+  font-family: Impact, sans-serif;
+}
+
+/* Font: Trebuchet MS */
+.ql-font-trebuchet-ms {
+  font-family: "Trebuchet MS", sans-serif;
+}
+  
+.ql-size-10px {
+  font-size: 10px;
+}
+.ql-size-12px {
+  font-size: 12px;
+}
+.ql-size-14px {
+  font-size: 14px;
+}
+.ql-size-16px {
+  font-size: 16px;
+}
+.ql-size-18px {
+  font-size: 18px;
+}
+.ql-size-24px {
+  font-size: 24px;
+}
+.ql-size-32px {
+  font-size: 32px;
+}
+.ql-size-48px {
+  font-size: 48px;
+}
