@@ -1,12 +1,12 @@
-import React, { useState, useCallback,useEffect } from "react";
+import React, { useState,useEffect } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import logo from "./assets/logo.png"
 import "./App.css";
 import LeftSidebar from "./components/LeftSidebar";
+import RightPanel from './components/RightPanel';
 import "./FontFormat.css";
 import "./quillSizes.css";
-
 
 const quillModules = {
   toolbar: [
@@ -27,10 +27,17 @@ const quillModules = {
 function App() {
   const [journals, setJournals] = useState([]); // Manage the list of journals
   const [activeJournal, setActiveJournal] = useState(null); // Manage the currently active journal
-  const [isPanelOpen, setIsPanelOpen] = useState(false); // Tracks panel state
-  const [questions, setQuestions] = useState([""]);
-  const [apiResponse, setApiResponse] = useState(null); // Stores API response
-  // Fetch journals from the backend
+  const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const { v4: uuidv4 } = require('uuid');
+
+  const togglePanel = () => {
+    if (!activeJournal) {
+      alert('Please select a journal first.');
+      return;
+    }
+    setIsPanelOpen((prev) => !prev);
+  };
+
   const fetchJournals = async () => {
     try {
       const response = await fetch("http://localhost:8000/journals"); // Replace with your FastAPI URL
@@ -56,8 +63,8 @@ function App() {
       setJournals(updatedJournals);
 
       // Optional: Update the backend
-      fetch(`http://localhost:8000/journals/${activeJournal.id}`, {
-        method: "PUT",
+      fetch(`http://localhost:8000/journals/update`, {
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
@@ -65,6 +72,7 @@ function App() {
       }).catch((error) => console.error("Error updating journal:", error));
     }
   };
+  
   const deleteJournal = async (journalId) => {
     try {
       const response = await fetch(`http://localhost:8000/journals/${journalId}`, {
@@ -81,72 +89,6 @@ function App() {
       console.error("Error deleting journal:", error);
     }
   };
-  const handlePanelToggle = () => {
-    setIsPanelOpen(!isPanelOpen); // Toggle the panel open/close
-  };
-
-  const handleQuestionChange = (index, value) => {
-    const updatedQuestions = [...questions];
-    updatedQuestions[index] = value; // Update the specific question
-    setQuestions(updatedQuestions);
-  };
-
-  const handleAddQuestion = () => {
-    setQuestions([...questions, ""]); // Add an empty question field
-  };
-
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await fetch("http://localhost:8000/api/your-endpoint", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ questions }), // Send questions array to backend
-      });
-
-      const data = await response.json();
-      setApiResponse(data); // Save the string and URL returned from the backend
-    } catch (error) {
-      console.error("Error triggering API:", error);
-    }
-  };
-  const syncJournalContent = useCallback(async () => {
-    if (!activeJournal) return;
-    try {
-      const response = await fetch(`http://localhost:8000/journals/${activeJournal.id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(activeJournal),
-      });
-      if (!response.ok) {
-        throw new Error("Failed to save journal");
-      }
-
-      console.log("Journal synced successfully!");
-    } catch (error) {
-      console.error("Error syncing journal:", error);
-    } 
-  }, [activeJournal]); // Use activeJournal as a dependency
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.ctrlKey && event.key === "s") {
-        event.preventDefault();
-        syncJournalContent();
-      }
-    };
-
-    window.addEventListener("keydown", handleKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [syncJournalContent]);
 
   useEffect(() => {
     fetchJournals();
@@ -154,9 +96,10 @@ function App() {
 
   const createNewJournal = async () => {
     const newJournal = {
-      id: Date.now(),
+      id: String(uuidv4()),
       name: `New Journal ${journals.length + 1}`,
       content: "",
+      recommendation: null
     };
 
     setJournals((prevJournals) => [...prevJournals, newJournal]);
@@ -183,9 +126,30 @@ function App() {
   };
 
   const handleContentChange = (content) => {
-    if (activeJournal) {
-      setActiveJournal({ ...activeJournal, content }); // Update content in the active journal
+    if (content === '<p><br></p>') {
+      // Do nothing if content is exactly '<br>'
+      return;
     }
+    if (activeJournal) {
+      const updatedJournal = { ...activeJournal, content: content };
+      setActiveJournal(updatedJournal);
+
+      // Update the state and backend
+      const updatedJournals = journals.map((journal) =>
+        journal.id === activeJournal.id ? updatedJournal : journal
+      );
+      setJournals(updatedJournals);
+
+      // Optional: Update the backend
+      fetch(`http://localhost:8000/journals/update`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedJournal),
+      }).catch((error) => console.error("Error updating journal:", error));
+    }
+    console.log(journals)
   };
 
   return (
@@ -223,7 +187,6 @@ function App() {
                 value={activeJournal.name}
                 onChange={(e) => updateJournalTitle(e.target.value)}
               />
-
               {/* Editor for Journal Content */}
               <ReactQuill
                 value={activeJournal.content}
@@ -248,39 +211,20 @@ function App() {
             <p>Select or create a journal to start writing.</p>
           )}
         </main>
-        {/* Right Panel */}
-        <div className={`right-panel ${isPanelOpen ? "open" : ""}`}>
-          <button className="close-button" onClick={handlePanelToggle}>
-            Close
-          </button>
-          <form onSubmit={handleFormSubmit}>
-            <h3>Answer Questions</h3>
-            {questions.map((question, index) => (
-              <label key={index}>
-                Question {index + 1}:
-                <input
-                  type="text"
-                  value={question}
-                  onChange={(e) =>
-                    handleQuestionChange(index, e.target.value)
-                  }
-                />
-              </label>
-            ))}
-            <button type="button" onClick={handleAddQuestion}>
-              Add Question
+          <div className="toggle-button-container">
+            <button onClick={togglePanel} className="toggle-button">
+              {isPanelOpen ? 'Close Recommendation Panel' : 'Open Recommendation Panel'}
             </button>
-            <button type="submit">Submit</button>
-          </form>
-          {apiResponse && (
-            <div className="api-response">
-              <p>Response: {apiResponse.string}</p>
-              <a href={apiResponse.url} target="_blank" rel="noopener noreferrer">
-                Visit Link
-              </a>
-            </div>
+          </div>
+          
+          {/* RightPanel Component */}
+          {isPanelOpen && (
+            <RightPanel
+              activeJournal={activeJournal}
+              onClose={() => setIsPanelOpen(false)}
+            />
           )}
-        </div>
+          
       </div>
     </div>
   );

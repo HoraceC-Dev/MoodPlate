@@ -3,3 +3,6 @@ fastapi
 python-dotenv
 langchain
 langchain_aws
+pytest 
+httpx 
+pytest-mock

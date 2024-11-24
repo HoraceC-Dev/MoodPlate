@@ -14,7 +14,6 @@ const LeftSidebar = ({
       <button onClick={createNewJournal} className="create-button">
         + Create New Journal
       </button>
-
       {/* List of Journals */}
       {journals.length > 0 ? (
         <ul className="journal-list">

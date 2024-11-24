@@ -2,12 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
-
+from database_operation import DB
+from journal_analysis import analyze_journal
+from recipe_finder import get_recipes
 app = FastAPI()
 
 # Simulated database
 journals = []
 
+db = DB()
 # Allow CORS for frontend
 app.add_middleware(
     CORSMiddleware,
@@ -22,13 +25,43 @@ class Journal(BaseModel):
     id: int
     name: str
     content: str
+    recommendation: str
 
 @app.post("/journals")
-async def create_journal(journal: Journal):
-    # Simulated database save
-    journals.append(journal)
-    return {"message": "Journal created successfully", "journal": journal}
+async def create_journal(journal: dict):
+    created_journal = db.create_journal(journal)
+    return created_journal
+
 
 @app.get("/journals", response_model=List[Journal])
 async def get_journals():
-    return journals
+    return []
+    # return db.get_all_journals()  # Assuming you have a method to fetch all journals
+
+@app.post("/journals/update")
+async def update_journal(new_journal: dict):
+    db.update_journal(new_journal)
+    return {"message": "Journal updated successfully"}
+
+@app.delete("/journals/{journal_id}")
+async def delete_journal(journal_id: str):
+    db.delete_journal(journal_id)
+    return {"message": "Journal deleted successfully"}
+
+@app.get("/recipe_recommendation/{journal_id}")
+async def check_recipe(journal_id: str):
+    recipes = db.get_recipe(journal_id)
+    return {"recommendation":recipes}
+
+@app.post("/recipe_recommendation")
+async def generate_recommendation(input: dict):
+    journal = input["journal"]
+    preference = input["preferences"]
+    mood_analysis = analyze_journal(journal["content"])
+    result = get_recipes(mood_analysis, preference)
+    journal["recommendation"] = result
+    db.update_journal(journal)
+    return {"recommendation": result}
+
+
+

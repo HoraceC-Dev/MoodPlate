@@ -48,24 +48,7 @@ Important note: You must strictly follow the output guideline. Pure json output,
 
     json_output = json.loads(json_string_content)
 
-    print({
-        "moods": json_output["moods"],
-        "ingredients" :json_output["ingredients"]
-    })
-
     return {
         "moods": json_output["moods"],
         "ingredients" :json_output["ingredients"]
     }
-
-def testing():
-    content = """
-Date: November 19, 2024
-
-Today was one of those long, grueling days. I’ve been in the library since 8 AM, drowning in textbooks and lecture notes. The midterm results came out this afternoon, and I got a 50%. It feels like a punch in the gut. I honestly thought I was doing better—maybe all this effort wasn’t enough? Or maybe I just don’t get it.
-
-Everyone else seems to be moving forward, and here I am, stuck in this endless cycle of studying and falling short. I skipped lunch because I was too anxious about the results and barely drank any water. By the time I grabbed a coffee in the evening, my head was pounding, and I felt like a zombie.
-
-It’s so frustrating. I know I’ve been putting in the hours, but it doesn’t feel like it’s paying off. How do people stay so calm under pressure? I just feel exhausted, overwhelmed, and like I’m running out of steam.
-"""
-    analyze_journal(content)
