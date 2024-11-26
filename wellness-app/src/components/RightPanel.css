@@ -87,3 +87,42 @@
     cursor: not-allowed;
 }
   
+.markdown-container {
+    max-width: 100%; /* Ensure the content doesn't exceed the container */
+    word-wrap: break-word; /* Break long words to avoid overflow */
+    white-space: pre-wrap; /* Preserve spacing and line breaks */
+    overflow-wrap: break-word; /* Break text at appropriate points */
+    overflow-y: auto; /* Enable vertical scrolling */
+    direction: rtl; /* Move scrollbar to the left */
+    text-align: left; /* Keep text left-aligned */
+    max-height: 450px; /* Limit height for testing scrollbar */
+    padding: 0 1em; /* Add horizontal padding (1em space on both sides) */
+    padding-left: 1.5em; /* Increase padding on the left (optional) */
+}
+.markdown-container * {
+    direction: ltr; /* Ensure text flows left-to-right */
+    unicode-bidi: plaintext; /* Ensure punctuation aligns naturally with text */
+}
+
+.markdown-container ol {
+    margin: 0; /* Reset outer margin */
+    padding: 0 0 0 1.5em; /* Add padding for left-aligned bullets */
+    list-style-type: disc; /* Ensure proper bullet style */
+}
+
+.markdown-container li {
+    white-space: normal; /* Allow text wrapping */
+    word-wrap: break-word; /* Break long words to fit */
+}
+
+
+.markdown-container h1, .markdown-container h2, .markdown-container h3,
+.markdown-container h4, .markdown-container h5, .markdown-container h6 {
+    margin-top: 1em; /* Add spacing before headings */
+    margin-bottom: 0.5em; /* Add spacing after headings */
+}
+
+.markdown-container p {
+    margin: 0.5em 0; /* Add spacing between paragraphs */
+}
+

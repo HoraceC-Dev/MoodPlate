@@ -5,16 +5,22 @@ from typing import List
 from database_operation import DB
 from journal_analysis import analyze_journal
 from recipe_finder import get_recipes
+import sys
 app = FastAPI()
 
 # Simulated database
 journals = []
 
 db = DB()
-# Allow CORS for frontend
+
+origins = [
+    "http://localhost:3000",
+    # Add other origins if needed
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # React app's URL
+    allow_origins=["*"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -31,7 +37,6 @@ class Journal(BaseModel):
 async def create_journal(journal: dict):
     created_journal = db.create_journal(journal)
     return created_journal
-
 
 @app.get("/journals", response_model=List[Journal])
 async def get_journals():
@@ -55,13 +60,20 @@ async def check_recipe(journal_id: str):
 
 @app.post("/recipe_recommendation")
 async def generate_recommendation(input: dict):
+    print(input)
     journal = input["journal"]
-    preference = input["preferences"]
+    preference = input["preference"]
     mood_analysis = analyze_journal(journal["content"])
     result = get_recipes(mood_analysis, preference)
     journal["recommendation"] = result
     db.update_journal(journal)
-    return {"recommendation": result}
+    modified_text = result.replace("```md", "")
+    final_text = modified_text.replace("```", "")
+    print(final_text)
+    return {"recommendation": final_text}
 
+@app.get("/interpreter")
+def get_interpreter():
+    return {"python_executable": sys.executable}
 
 

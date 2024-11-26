@@ -1,6 +1,8 @@
 // src/components/RightPanel.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, act } from 'react';
 import './RightPanel.css';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const RightPanel = ({ activeJournal }) => {
   const [panelContent, setPanelContent] = useState(''); // 'recommendation' or 'preferences'
@@ -31,7 +33,7 @@ const RightPanel = ({ activeJournal }) => {
         }
       } catch (err) {
         console.error('Error fetching recommendation:', err);
-        setError('Failed to fetch recommendation.');
+        setError('');
         setPanelContent('preferences'); // Proceed to collect preferences even on error
       }
     };
@@ -52,19 +54,31 @@ const RightPanel = ({ activeJournal }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate required fields
-    if (!preferences.favoriteFood || !preferences.cuisineType) {
-      setError('Please fill in all required fields.');
-      return;
+    const formData = new FormData(e.target);
+
+    const updatedPreferences = { ...preferences }; // Create a copy of the current preferences
+    for (const [key, value] of formData.entries()) {
+      updatedPreferences[key] = value === "null" ? null : value; // Update the copied object
     }
+
+    setPreferences(updatedPreferences); // Update the state using setPreferences
     
     setIsSubmitting(true);
     setError(null);
     
     try {
       const data = {
-        journal: activeJournal,
-        preferences,
+        journal: {
+          "content": activeJournal.content,
+          "name": activeJournal.name,
+          "id": activeJournal.id,
+          "recommendation": activeJournal.recommendation
+        },
+        preference: {
+          favoriteFood:preferences.favoriteFood, 
+          dietaryRestrictions: preferences.dietaryRestrictions,
+          cuisineType: preferences.cuisineType,
+        }
       };
       
       const response = await fetch("http://localhost:8000/recipe_recommendation", {
@@ -109,11 +123,14 @@ const RightPanel = ({ activeJournal }) => {
       <h2>{panelContent === 'recommendation' ? 'Your Recommendation' : 'Provide Your Preferences'}</h2>
       
       {panelContent === 'recommendation' ? (
-        <div>
-          <p>{recommendation}</p>
-          {/* Button to regenerate recommendation */}
-          <button onClick={handleRegenerate}>Regenerate Recommendation</button>
-        </div>
+      <div className="markdown-container">
+        {/* <ReactMarkdown
+          //children={recommendation}
+          //remarkPlugins={[remarkGfm]} // Enable GitHub Flavored Markdown
+        />{recommendation}<ReactMarkdown/> */}
+        <ReactMarkdown>{recommendation}</ReactMarkdown>
+        <button onClick={handleRegenerate}>Regenerate Recommendation</button>
+      </div>
       ) : (
         <form onSubmit={handleSubmit}>
           {/* Favorite Food */}
@@ -126,7 +143,7 @@ const RightPanel = ({ activeJournal }) => {
               onChange={handleChange}
               required
             >
-              <option value="">Select an option</option>
+              <option value="null">Select an option</option>
               <option value="American">American</option>
               <option value="Chinese">Chinese</option>
               <option value="European">European</option>
@@ -136,7 +153,7 @@ const RightPanel = ({ activeJournal }) => {
               <option value="Korean">Korean</option>
               <option value="Mexican">Mexican</option>
               <option value="Thai">Thai</option>
-              <option value="">None</option>
+              <option value="null">None</option>
             </select>
           </div>
           {/* Dietary Restrictions */}
@@ -148,13 +165,14 @@ const RightPanel = ({ activeJournal }) => {
               value={preferences.dietaryRestrictions}
               onChange={handleChange}
             >
+              <option value="null">Select an option</option>
               <option value="Ketogenic">Vegetarian</option>
               <option value="Vegetarian">Vegetarian</option>
               <option value="Vegan">Vegan</option>
               <option value="Gluten Free">Gluten-Free</option>
               <option value="Keto">Keto</option>
               <option value="Paleo">Paleo</option>
-              <option value="">None</option>
+              <option value="null">None</option>
             </select>
           </div>
           {/* Cuisine Type */}
@@ -167,12 +185,13 @@ const RightPanel = ({ activeJournal }) => {
               onChange={handleChange}
               required
             >
+              <option value="null">Select an option</option>
               <option value="popularity">Popularity</option>
               <option value="time">Preparation Time</option>
               <option value="healthiness">Healthiness</option>
               <option value="calories">Calories</option>
               <option value="price">Price</option>
-              <option value="">None</option>
+              <option value="null">None</option>
             </select>
           </div>
           

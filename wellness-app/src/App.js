@@ -149,7 +149,6 @@ function App() {
         body: JSON.stringify(updatedJournal),
       }).catch((error) => console.error("Error updating journal:", error));
     }
-    console.log(journals)
   };
 
   return (
