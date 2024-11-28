@@ -1,7 +1,7 @@
 from langchain_core.prompts import ChatPromptTemplate
 import json
 
-from models.llm import llm_mistral
+from app.models.llm import llm_mistral
 
 def analyze_journal(journal_text):
     prompt = ChatPromptTemplate.from_messages(

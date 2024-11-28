@@ -2,9 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
-from database_operation import DB
-from journal_analysis import analyze_journal
-from recipe_finder import get_recipes
+from app.database_operation import DB
+from app.journal_analysis import analyze_journal
+from app.recipe_finder import get_recipes
 import sys
 app = FastAPI()
 

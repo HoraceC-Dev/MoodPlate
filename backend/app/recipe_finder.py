@@ -1,7 +1,7 @@
 from dotenv import load_dotenv
 import requests
 import os
-from models.llm import llm_mistral
+from app.models.llm import llm_mistral
 from langchain_core.prompts import ChatPromptTemplate
 
 def get_recipes(recommendation, user_preferences):
