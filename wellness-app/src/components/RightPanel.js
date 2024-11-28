@@ -21,7 +21,7 @@ const RightPanel = ({ activeJournal }) => {
       if (!activeJournal) return;
       
       try {
-        const response = await fetch(`http://localhost:8000/recipe_recommendation/${activeJournal.id}`);
+        const response = await fetch(`https://moodplate.onrender.com/recipe_recommendation/${activeJournal.id}`);
 
         const data = await response.json();
         if (data.recommendation) {
@@ -81,7 +81,7 @@ const RightPanel = ({ activeJournal }) => {
         }
       };
       
-      const response = await fetch("http://localhost:8000/recipe_recommendation", {
+      const response = await fetch("https://moodplate.onrender.com/recipe_recommendation", {
         method: "POST", // Use POST to send data in the request body
         headers: {
           "Content-Type": "application/json", // Specify the content type

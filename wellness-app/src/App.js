@@ -40,7 +40,7 @@ function App() {
 
   const fetchJournals = async () => {
     try {
-      const response = await fetch("http://localhost:8000/journals"); // Replace with your FastAPI URL
+      const response = await fetch("https://moodplate.onrender.com/journals"); // Replace with your FastAPI URL
       if (!response.ok) {
         throw new Error("Failed to fetch journals");
       }
@@ -63,7 +63,7 @@ function App() {
       setJournals(updatedJournals);
 
       // Optional: Update the backend
-      fetch(`http://localhost:8000/journals/update`, {
+      fetch(`https://moodplate.onrender.com/journals/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -75,7 +75,7 @@ function App() {
   
   const deleteJournal = async (journalId) => {
     try {
-      const response = await fetch(`http://localhost:8000/journals/${journalId}`, {
+      const response = await fetch(`https://moodplate.onrender.com/journals/${journalId}`, {
         method: "DELETE",
       });
       if (!response.ok) {
@@ -106,7 +106,7 @@ function App() {
     setActiveJournal(newJournal);
 
     try {
-      const response = await fetch("http://localhost:8000/journals", {
+      const response = await fetch("https://moodplate.onrender.com/journals", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -141,7 +141,7 @@ function App() {
       setJournals(updatedJournals);
 
       // Optional: Update the backend
-      fetch(`http://localhost:8000/journals/update`, {
+      fetch(`https://moodplate.onrender.com/journals/update`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
